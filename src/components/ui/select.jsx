@@ -24,7 +24,7 @@ export const Select = ({ children, value, onValueChange, ...props }) => {
   )
 }
 
-export const SelectTrigger = ({ className = "", children, isOpen, setIsOpen, ...props }) => {
+export const SelectTrigger = ({ className = "", children, isOpen, setIsOpen, value, ...props }) => {
   return (
     <button
       type="button"
@@ -32,7 +32,11 @@ export const SelectTrigger = ({ className = "", children, isOpen, setIsOpen, ...
       onClick={() => setIsOpen?.(!isOpen)}
       {...props}
     >
-      <span className="flex-1 text-left">{children}</span>
+      <span className="flex-1 text-left">
+        {React.Children.map(children, (child) =>
+          React.cloneElement(child, { value })
+        )}
+      </span>
       <svg 
         className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} 
         fill="none" 

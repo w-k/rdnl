@@ -66,7 +66,7 @@ function formatMinutesToMMSS(minutes) {
 }
 
 export default function App() {
-  const [dilution, setDilution] = useState("1+100");
+  const [dilution, setDilution] = useState("1+50");
   const [temp, setTemp] = useState("20");
   const [useFridge, setUseFridge] = useState(false);
 
