@@ -6,10 +6,10 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
-import { Info, Thermometer, Timer, FlaskConical } from "lucide-react";
+import { Info, Thermometer, Timer, FlaskConical, Settings, RotateCcw } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 
-const BASE_TIMES = { "1+100": 60, "1+50": 30 };
+const DEFAULT_BASE_TIMES = { "1+100": 60, "1+50": 30 };
 const DEFAULT_ENV_FRIDGE = 4;
 const DEFAULT_TAU = 30;
 
@@ -22,8 +22,8 @@ function temperatureAtTime(t, T0, useFridge, Tenv = DEFAULT_ENV_FRIDGE, tau = DE
   return Tenv + (T0 - Tenv) * Math.exp(-t / tau);
 }
 
-function simulateDevTime(dilution, T0, useFridge) {
-  const baseline = BASE_TIMES[dilution] ?? 60;
+function simulateDevTime(dilution, T0, useFridge, baseTimes = DEFAULT_BASE_TIMES) {
+  const baseline = baseTimes[dilution] ?? 60;
   const dt = 0.25;
   let t = 0;
   let equiv = 0;
@@ -69,14 +69,27 @@ export default function App() {
   const [dilution, setDilution] = useState("1+50");
   const [temp, setTemp] = useState("20");
   const [useFridge, setUseFridge] = useState(false);
+  const [baseTimes, setBaseTimes] = useState(DEFAULT_BASE_TIMES);
+  const [showSettings, setShowSettings] = useState(false);
 
   const parsedTemp = Number(temp);
   const valid = isFinite(parsedTemp) && parsedTemp > -10 && parsedTemp < 60;
 
+  const handleBaseTimeChange = (dilutionKey, value) => {
+    const numValue = Number(value);
+    if (isFinite(numValue) && numValue > 0) {
+      setBaseTimes(prev => ({ ...prev, [dilutionKey]: numValue }));
+    }
+  };
+
+  const resetToDefaults = () => {
+    setBaseTimes(DEFAULT_BASE_TIMES);
+  };
+
   const result = useMemo(() => {
     if (!valid) return null;
-    return simulateDevTime(dilution, parsedTemp, useFridge);
-  }, [dilution, parsedTemp, useFridge, valid]);
+    return simulateDevTime(dilution, parsedTemp, useFridge, baseTimes);
+  }, [dilution, parsedTemp, useFridge, baseTimes, valid]);
 
   const status = useMemo(() => {
     if (!result || !valid) return null;
@@ -102,6 +115,65 @@ export default function App() {
           </div>
           <Badge className="text-xs" variant="secondary">Beta • Model-based</Badge>
         </header>
+
+        <Card className="rounded-2xl shadow-sm">
+          <CardContent className="p-4 sm:p-6">
+            <button
+              onClick={() => setShowSettings(!showSettings)}
+              className="flex items-center gap-2 text-sm text-neutral-700 hover:text-neutral-900 transition-colors w-full justify-between"
+            >
+              <div className="flex items-center gap-2">
+                <Settings className="w-4 h-4" />
+                <span className="font-medium">Baseline Development Times</span>
+              </div>
+              <span className="text-xs text-neutral-500">{showSettings ? '▼' : '▶'}</span>
+            </button>
+
+            {showSettings && (
+              <div className="mt-4 pt-4 border-t grid gap-4">
+                <p className="text-sm text-neutral-600">
+                  Configure baseline development times at 20°C for each dilution. These serve as the reference for temperature-adjusted calculations.
+                </p>
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="base-1+100">1+100 baseline (minutes)</Label>
+                    <Input
+                      id="base-1+100"
+                      type="number"
+                      min="1"
+                      step="1"
+                      className="rounded-xl"
+                      value={baseTimes["1+100"]}
+                      onChange={(e) => handleBaseTimeChange("1+100", e.target.value)}
+                    />
+                    <span className="text-xs text-neutral-500">Default: {DEFAULT_BASE_TIMES["1+100"]} min</span>
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="base-1+50">1+50 baseline (minutes)</Label>
+                    <Input
+                      id="base-1+50"
+                      type="number"
+                      min="1"
+                      step="1"
+                      className="rounded-xl"
+                      value={baseTimes["1+50"]}
+                      onChange={(e) => handleBaseTimeChange("1+50", e.target.value)}
+                    />
+                    <span className="text-xs text-neutral-500">Default: {DEFAULT_BASE_TIMES["1+50"]} min</span>
+                  </div>
+                </div>
+                <Button
+                  onClick={resetToDefaults}
+                  variant="outline"
+                  className="rounded-xl flex items-center gap-2 w-fit"
+                >
+                  <RotateCcw className="w-4 h-4" />
+                  Reset to Defaults
+                </Button>
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
         <Card className="rounded-2xl shadow-sm">
           <CardContent className="p-4 sm:p-6 grid gap-4">
@@ -146,7 +218,7 @@ export default function App() {
                 <div className="grid gap-3">
                   <div className="flex items-center gap-2 text-sm text-neutral-600">
                     <Timer className="w-4 h-4"/>
-                    Baseline at 20°C: {BASE_TIMES[dilution]} min • Modeled dev time below
+                    Baseline at 20°C: {baseTimes[dilution]} min • Modeled dev time below
                   </div>
                   <div className="rounded-2xl p-4 border bg-white flex items-center justify-between">
                     <div className="grid gap-1">
