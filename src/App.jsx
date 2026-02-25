@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { lastModified } from "./lastModified";
 import { Card, CardContent } from "@/components/ui/card";
 import { NumericInput } from "@/components/ui/numeric-input";
@@ -6,7 +6,8 @@ import { ComboInput } from "@/components/ui/combo-input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
-import { Thermometer, Timer, FlaskConical, HelpCircle, Moon, Sun } from "lucide-react";
+import { Thermometer, Timer, FlaskConical, HelpCircle, Moon, Sun, Share2 } from "lucide-react";
+import { toPng } from "html-to-image";
 import {
   LineChart,
   Line,
@@ -105,6 +106,11 @@ function classifyRisk(T0, useFridge, devMinutes) {
   }
 }
 
+const DILUTION_OPTIONS = [
+  { value: 60, label: "1+100" },
+  { value: 30, label: "1+50" },
+];
+
 function formatMinutesToMMSS(minutes) {
   const totalSeconds = Math.round(minutes * 60);
   const mm = Math.floor(totalSeconds / 60);
@@ -129,6 +135,27 @@ export default function App() {
       localStorage.theme = 'light';
     }
   }, [dark]);
+
+  const exportRef = useRef(null);
+  const timestampRef = useRef(null);
+  const dilutionLabel = DILUTION_OPTIONS.find(o => o.value === baselineTime)?.label;
+
+  const handleExport = async () => {
+    if (!exportRef.current || !valid || !result) return;
+    const now = new Date();
+    const pad = (n) => String(n).padStart(2, '0');
+    const ts = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+    if (timestampRef.current) timestampRef.current.textContent = `Exported ${ts}`;
+    try {
+      const dataUrl = await toPng(exportRef.current, { pixelRatio: 2 });
+      const link = document.createElement('a');
+      link.download = `rodinal-stand-${formatMinutesToMMSS(result.devMinutes).replace(':', 'm')}s.png`;
+      link.href = dataUrl;
+      link.click();
+    } catch (err) {
+      console.error('Export failed:', err);
+    }
+  };
 
   const tempC = toC(temp, unit);
   const valid =
@@ -181,6 +208,14 @@ export default function App() {
           </div>
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
+            <button
+              onClick={handleExport}
+              disabled={!valid || !result}
+              className="p-1.5 rounded-lg text-neutral-500 hover:text-neutral-700 hover:bg-neutral-100 dark:hover:text-neutral-300 dark:hover:bg-neutral-800 transition-colors disabled:opacity-30 disabled:pointer-events-none"
+              aria-label="Export as image"
+            >
+              <Share2 className="w-4 h-4" />
+            </button>
             <button
               onClick={() => setDark(d => !d)}
               className="p-1.5 rounded-lg text-neutral-500 hover:text-neutral-700 hover:bg-neutral-100 dark:hover:text-neutral-300 dark:hover:bg-neutral-800 transition-colors"
@@ -259,10 +294,7 @@ export default function App() {
                   value={baselineTime}
                   onChange={setBaselineTime}
                   validate={(n) => n > 0}
-                  options={[
-                    { value: 60, label: "1+100" },
-                    { value: 30, label: "1+50" },
-                  ]}
+                  options={DILUTION_OPTIONS}
                 />
               </div>
               <div className="grid gap-2">
@@ -420,6 +452,153 @@ export default function App() {
           <span>Last modified {lastModified}</span>
         </footer>
       </div>
+
+      {valid && result && (
+        <div style={{ position: 'fixed', left: '-9999px', top: 0 }}>
+          <div ref={exportRef} className="bg-neutral-50 dark:bg-neutral-900 text-neutral-900 dark:text-neutral-50 p-6" style={{ width: 900 }}>
+            <div className="text-lg font-semibold mb-4">Rodinal Stand Development Calculator</div>
+            <Card className="rounded-2xl shadow-sm">
+              <CardContent className="p-6 grid gap-4">
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="grid gap-1">
+                    <div className="text-xs text-neutral-500 dark:text-neutral-400">
+                      Time at {fromC(20, unit).toFixed(0)}{unitLabel(unit)} (minutes)
+                    </div>
+                    <div className="text-sm font-medium">
+                      {baselineTime} min{dilutionLabel ? ` (${dilutionLabel})` : ''}
+                    </div>
+                  </div>
+                  <div className="grid gap-1">
+                    <div className="text-xs text-neutral-500 dark:text-neutral-400">
+                      Actual temperature ({unitLabel(unit)})
+                    </div>
+                    <div className="text-sm font-medium">
+                      {temp} {unitLabel(unit)}
+                    </div>
+                  </div>
+                  <div className="grid gap-1">
+                    <div className="text-xs text-neutral-500 dark:text-neutral-400">
+                      Fridge cooling
+                    </div>
+                    <div className="text-sm font-medium">
+                      {useFridge ? `Yes (${fromC(4, unit).toFixed(0)}${unitLabel(unit)}, τ\u00a0=\u00a030\u00a0min)` : 'No'}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="grid gap-3">
+                    <div className="rounded-2xl p-4 border dark:border-neutral-700 bg-white dark:bg-neutral-800 flex items-center justify-between">
+                      <div className="grid gap-1">
+                        <div className="text-sm text-neutral-500 dark:text-neutral-400">
+                          Calculated development time
+                        </div>
+                        <div className="text-3xl font-semibold tracking-tight">
+                          {formatMinutesToMMSS(result.devMinutes)}
+                        </div>
+                      </div>
+                      {status && (
+                        <Badge className={`text-white ${status.color} rounded-xl px-3 py-1`}>
+                          {status.msg}
+                        </Badge>
+                      )}
+                    </div>
+                    <div className="grid grid-cols-3 gap-3">
+                      <div className="rounded-2xl p-3 border dark:border-neutral-700 bg-white dark:bg-neutral-800">
+                        <div className="text-xs text-neutral-500 dark:text-neutral-400 flex items-center gap-1">
+                          <Thermometer className="w-3 h-3" />
+                          Avg. temp
+                        </div>
+                        <div className="text-lg font-medium">
+                          {fromC(result.avgTemp, unit).toFixed(1)}
+                          {unitLabel(unit)}
+                        </div>
+                      </div>
+                      <div className="rounded-2xl p-3 border dark:border-neutral-700 bg-white dark:bg-neutral-800">
+                        <div className="text-xs text-neutral-500 dark:text-neutral-400 flex items-center gap-1">
+                          <Thermometer className="w-3 h-3" />
+                          Final temp
+                        </div>
+                        <div className="text-lg font-medium">
+                          {fromC(result.finalTemp, unit).toFixed(1)}
+                          {unitLabel(unit)}
+                        </div>
+                      </div>
+                      <div className="rounded-2xl p-3 border dark:border-neutral-700 bg-white dark:bg-neutral-800">
+                        <div className="text-xs text-neutral-500 dark:text-neutral-400 flex items-center gap-1">
+                          <FlaskConical className="w-3 h-3" />
+                          Baseline
+                        </div>
+                        <div className="text-lg font-medium">
+                          {baselineTime} min
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="rounded-2xl border dark:border-neutral-700 bg-white dark:bg-neutral-800 p-3">
+                    <div className="text-sm text-neutral-600 dark:text-neutral-400 mb-2">
+                      Cooling & activity over time
+                    </div>
+                    <LineChart width={390} height={224} data={chartData}>
+                      <XAxis
+                        dataKey="time"
+                        tick={{ fontSize: 12, fill: dark ? '#a3a3a3' : '#737373' }}
+                        label={{
+                          value: "Minutes",
+                          position: "insideBottomRight",
+                          offset: -4,
+                          fontSize: 12,
+                          fill: dark ? '#a3a3a3' : '#737373',
+                        }}
+                      />
+                      <YAxis
+                        yAxisId="left"
+                        tick={{ fontSize: 12, fill: dark ? '#a3a3a3' : '#737373' }}
+                        domain={[0, "auto"]}
+                        label={{
+                          value: unitLabel(unit),
+                          angle: -90,
+                          position: "insideLeft",
+                          fontSize: 12,
+                          fill: dark ? '#a3a3a3' : '#737373',
+                        }}
+                      />
+                      <YAxis
+                        yAxisId="right"
+                        orientation="right"
+                        tick={{ fontSize: 12, fill: dark ? '#a3a3a3' : '#737373' }}
+                        domain={[0, "auto"]}
+                        label={{
+                          value: "Eq. mins",
+                          angle: -90,
+                          position: "insideRight",
+                          fontSize: 12,
+                          fill: dark ? '#a3a3a3' : '#737373',
+                        }}
+                      />
+                      <Line
+                        yAxisId="left"
+                        type="monotone"
+                        dataKey="Temperature"
+                        dot={false}
+                        strokeWidth={2}
+                      />
+                      <Line
+                        yAxisId="right"
+                        type="monotone"
+                        dataKey="20°C-equiv mins"
+                        dot={false}
+                        strokeWidth={2}
+                      />
+                    </LineChart>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            <div ref={timestampRef} className="text-xs text-neutral-400 dark:text-neutral-500 mt-3" />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
