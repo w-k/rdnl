@@ -68,41 +68,41 @@ function classifyRisk(T0, useFridge, devMinutes) {
     if (T0 >= 26)
       return {
         msg: "Too hot for stand without cooling — expect blown highlights.",
-        color: "bg-red-600",
+        color: "bg-[#a63d2f]",
       };
     if (T0 >= 24)
       return {
         msg: "Very warm — proceed with caution or consider the fridge.",
-        color: "bg-orange-500",
+        color: "bg-[#a07030]",
       };
     if (T0 >= 18 && T0 <= 22)
       return {
         msg: "Good starting point for classic stand.",
-        color: "bg-emerald-600",
+        color: "bg-[#4d7c4d]",
       };
     if (T0 < 16)
       return {
         msg: "Quite cool — risk of underdevelopment/flat contrast.",
-        color: "bg-sky-600",
+        color: "bg-[#4a6d8c]",
       };
     return {
       msg: "Usable — not perfect but manageable.",
-      color: "bg-lime-600",
+      color: "bg-[#4d7c4d]",
     };
   } else {
     if (devMinutes < 20)
       return {
         msg: "Too fast even with cooling — reduce temp or use 1+100.",
-        color: "bg-red-600",
+        color: "bg-[#a63d2f]",
       };
     if (devMinutes > 120)
       return {
         msg: "Very long time — warm up a bit or use 1+50.",
-        color: "bg-orange-500",
+        color: "bg-[#a07030]",
       };
     return {
       msg: "Cooling-managed stand — stable highlights, restrained shadows.",
-      color: "bg-emerald-600",
+      color: "bg-[#4d7c4d]",
     };
   }
 }
@@ -192,17 +192,24 @@ export default function App() {
       }));
   }, [result, unit]);
 
+  // Chart colors
+  const lineAmber = '#b8863a';
+  const lineSage = '#7a9e7e';
+  const gridColor = dark ? 'rgba(138,126,110,0.12)' : 'rgba(138,126,110,0.12)';
+  const axisColor = dark ? '#3a362f' : '#e0d9cf';
+  const tickColor = dark ? '#a69d93' : '#8a7e6e';
+
   return (
-    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900 text-neutral-900 dark:text-neutral-50 p-6">
+    <div className="min-h-screen bg-warmgray-100 dark:bg-warmgray-900 text-warmgray-900 dark:text-warmgray-100 p-6">
       <div className="max-w-4xl mx-auto grid gap-6">
         <header className="flex items-start justify-between">
           <div>
             <h1 className="text-8xl font-forgetica tracking-wide leading-none">
               RDNL
             </h1>
-            <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-2 max-w-xl">
+            <p className="text-sm text-warmgray-500 dark:text-warmgray-400 mt-2 max-w-xl">
               Rodinal stand development calculator.{" "}
-              <a href="https://www.digitaltruth.com/devchart.php?doc=stand" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-neutral-900 dark:hover:text-neutral-100">Stand development</a> uses
+              <a href="https://www.digitaltruth.com/devchart.php?doc=stand" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-warmgray-900 dark:hover:text-warmgray-100">Stand development</a> uses
               highly diluted developer and long times to produce compensating effects in the negative.
               Temperature matters — warm conditions accelerate development and risk blown highlights.
               This calculator models adjusted times for your actual temperature, with optional fridge cooling.
@@ -212,20 +219,20 @@ export default function App() {
             <div className="flex items-center gap-2">
             <button
               onClick={() => setDark(d => !d)}
-              className="p-1.5 rounded-lg text-neutral-500 hover:text-neutral-700 hover:bg-neutral-100 dark:hover:text-neutral-300 dark:hover:bg-neutral-800 transition-colors"
+              className="p-1.5 rounded-lg text-warmgray-500 hover:text-warmgray-700 hover:bg-warmgray-200 dark:hover:text-warmgray-300 dark:hover:bg-warmgray-800 transition-colors"
               aria-label="Toggle dark mode"
             >
               {dark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </button>
-            <div className="flex rounded-lg border border-neutral-200 dark:border-neutral-700 text-xs overflow-hidden">
+            <div className="flex rounded-lg border border-warmgray-200 dark:border-warmgray-700 text-xs overflow-hidden">
               {["C", "F", "K"].map((u) => (
                 <button
                   key={u}
                   onClick={() => switchUnit(u)}
                   className={`px-2 py-1 transition-colors ${
                     unit === u
-                      ? "bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900"
-                      : "text-neutral-500 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800"
+                      ? "bg-warmgray-900 text-warmgray-50 dark:bg-warmgray-100 dark:text-warmgray-900"
+                      : "text-warmgray-500 hover:bg-warmgray-200 dark:text-warmgray-400 dark:hover:bg-warmgray-800"
                   }`}
                 >
                   {unitLabel(u)}
@@ -238,7 +245,7 @@ export default function App() {
 
         <button
           onClick={() => setShowHow(!showHow)}
-          className="flex items-center gap-1.5 text-xs text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300 transition-colors w-fit"
+          className="flex items-center gap-1.5 text-xs text-warmgray-500 hover:text-warmgray-700 dark:hover:text-warmgray-300 transition-colors w-fit"
         >
           <HelpCircle className="w-3.5 h-3.5" />
           How does it work?
@@ -246,8 +253,8 @@ export default function App() {
 
         {showHow && (
           <Card className="rounded-2xl shadow-sm">
-            <CardContent className="p-4 sm:p-6 text-sm text-neutral-600 dark:text-neutral-400 grid gap-3">
-              <p className="font-medium text-neutral-800 dark:text-neutral-200">How the calculation works</p>
+            <CardContent className="p-4 sm:p-6 text-sm text-warmgray-600 dark:text-warmgray-400 grid gap-3">
+              <p className="font-medium text-warmgray-800 dark:text-warmgray-200">How the calculation works</p>
               <p>
                 Development times are usually given for 20°C. At different temperatures, chemistry
                 runs faster or slower. This calculator uses an exponential rate model: for every
@@ -267,7 +274,7 @@ export default function App() {
                 τ of 30 minutes. This means the tank loses about 63% of the temperature
                 difference in the first 30 minutes.
               </p>
-              <p className="text-xs text-neutral-400 dark:text-neutral-500">
+              <p className="text-xs text-warmgray-400 dark:text-warmgray-500">
                 This is a pragmatic model, not a precise chemical simulation. Always verify with test strips and your own workflow.
               </p>
             </CardContent>
@@ -278,7 +285,7 @@ export default function App() {
         <button
           onClick={handleExport}
           disabled={!valid || !result}
-          className="absolute -top-3 right-4 z-10 flex items-center gap-1.5 px-3 py-1 rounded-full text-xs text-neutral-500 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 hover:text-neutral-700 dark:hover:text-neutral-300 transition-colors disabled:opacity-30 disabled:pointer-events-none shadow-sm"
+          className="absolute -top-3 right-4 z-10 flex items-center gap-1.5 px-3 py-1 rounded-full text-xs text-warmgray-500 bg-warmgray-50 dark:bg-warmgray-800 border border-warmgray-200 dark:border-warmgray-700 hover:text-warmgray-700 dark:hover:text-warmgray-300 transition-colors disabled:opacity-30 disabled:pointer-events-none shadow-sm"
           aria-label="Export as image"
         >
           <Share2 className="w-3 h-3" />
@@ -315,7 +322,7 @@ export default function App() {
               <div className="flex items-center justify-between sm:justify-start gap-3">
                 <div className="grid">
                   <Label className="mb-1">Put tank in fridge</Label>
-                  <div className="text-xs text-neutral-500 dark:text-neutral-400">
+                  <div className="text-xs text-warmgray-500 dark:text-warmgray-400">
                     Assumes {fromC(4, unit).toFixed(0)}
                     {unitLabel(unit)} fridge, τ = 30 min
                   </div>
@@ -327,12 +334,12 @@ export default function App() {
             {valid && result && (
               <div className="grid lg:grid-cols-2 gap-6">
                 <div className="grid gap-3">
-                  <div className="rounded-2xl p-4 border dark:border-neutral-700 bg-white dark:bg-neutral-800 flex items-center justify-between">
+                  <div className="rounded-2xl p-4 border border-warmgray-200 dark:border-warmgray-700 bg-warmgray-50 dark:bg-warmgray-800 flex items-center justify-between">
                     <div className="grid gap-1">
-                      <div className="text-sm text-neutral-500 dark:text-neutral-400">
+                      <div className="text-sm text-warmgray-500 dark:text-warmgray-400">
                         Calculated development time
                       </div>
-                      <div className="text-3xl font-mono font-medium tracking-tight">
+                      <div className="text-3xl font-mono font-medium tracking-tight time-glow">
                         {formatMinutesToMMSS(result.devMinutes)}
                       </div>
                     </div>
@@ -345,8 +352,8 @@ export default function App() {
                     )}
                   </div>
                   <div className="grid grid-cols-3 gap-3">
-                    <div className="rounded-2xl p-3 border dark:border-neutral-700 bg-white dark:bg-neutral-800">
-                      <div className="text-xs text-neutral-500 dark:text-neutral-400 flex items-center gap-1">
+                    <div className="rounded-2xl p-3 border border-warmgray-200 dark:border-warmgray-700 bg-warmgray-50 dark:bg-warmgray-800">
+                      <div className="text-xs text-warmgray-500 dark:text-warmgray-400 flex items-center gap-1">
                         <Thermometer className="w-3 h-3" />
                         Avg. temp
                       </div>
@@ -355,8 +362,8 @@ export default function App() {
                         {unitLabel(unit)}
                       </div>
                     </div>
-                    <div className="rounded-2xl p-3 border dark:border-neutral-700 bg-white dark:bg-neutral-800">
-                      <div className="text-xs text-neutral-500 dark:text-neutral-400 flex items-center gap-1">
+                    <div className="rounded-2xl p-3 border border-warmgray-200 dark:border-warmgray-700 bg-warmgray-50 dark:bg-warmgray-800">
+                      <div className="text-xs text-warmgray-500 dark:text-warmgray-400 flex items-center gap-1">
                         <Thermometer className="w-3 h-3" />
                         Final temp
                       </div>
@@ -365,8 +372,8 @@ export default function App() {
                         {unitLabel(unit)}
                       </div>
                     </div>
-                    <div className="rounded-2xl p-3 border dark:border-neutral-700 bg-white dark:bg-neutral-800">
-                      <div className="text-xs text-neutral-500 dark:text-neutral-400 flex items-center gap-1">
+                    <div className="rounded-2xl p-3 border border-warmgray-200 dark:border-warmgray-700 bg-warmgray-50 dark:bg-warmgray-800">
+                      <div className="text-xs text-warmgray-500 dark:text-warmgray-400 flex items-center gap-1">
                         <FlaskConical className="w-3 h-3" />
                         Baseline
                       </div>
@@ -376,31 +383,31 @@ export default function App() {
                     </div>
                   </div>
                 </div>
-                <div className="rounded-2xl border dark:border-neutral-700 bg-white dark:bg-neutral-800 p-3">
-                  <div className="text-sm text-neutral-600 dark:text-neutral-400 mb-2">
+                <div className="rounded-2xl border border-warmgray-200 dark:border-warmgray-700 bg-warmgray-50 dark:bg-warmgray-800 p-3 cursor-crosshair">
+                  <div className="text-sm text-warmgray-600 dark:text-warmgray-400 mb-2">
                     Cooling & activity over time
                   </div>
                   <div className="h-56">
                     <ResponsiveContainer width="100%" height="100%">
                       <LineChart data={chartData} margin={{ top: 4, right: 64, bottom: 20, left: 8 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke={dark ? '#404040' : '#e5e5e5'} />
+                        <CartesianGrid stroke={gridColor} />
                         <XAxis
                           dataKey="time"
-                          tick={{ fontSize: 11, fill: dark ? '#a3a3a3' : '#737373' }}
+                          tick={{ fontSize: 11, fill: tickColor }}
                           tickLine={false}
-                          axisLine={{ stroke: dark ? '#525252' : '#d4d4d4' }}
+                          axisLine={{ stroke: axisColor }}
                           tickFormatter={v => Math.round(Number(v))}
                           label={{
                             value: "time (min)",
                             position: "insideBottom",
                             offset: -12,
                             fontSize: 11,
-                            fill: dark ? '#737373' : '#a3a3a3',
+                            fill: tickColor,
                           }}
                         />
                         <YAxis
                           yAxisId="left"
-                          tick={{ fontSize: 11, fill: '#8884d8' }}
+                          tick={{ fontSize: 11, fill: lineAmber }}
                           tickLine={false}
                           axisLine={false}
                           domain={[0, "auto"]}
@@ -410,13 +417,13 @@ export default function App() {
                             position: "insideLeft",
                             dx: 10,
                             fontSize: 11,
-                            fill: '#8884d8',
+                            fill: lineAmber,
                           }}
                         />
                         <YAxis
                           yAxisId="right"
                           orientation="right"
-                          tick={{ fontSize: 11, fill: '#82ca9d' }}
+                          tick={{ fontSize: 11, fill: lineSage }}
                           tickLine={false}
                           axisLine={false}
                           domain={[0, "auto"]}
@@ -426,19 +433,19 @@ export default function App() {
                             position: "insideRight",
                             dx: -10,
                             fontSize: 11,
-                            fill: '#82ca9d',
+                            fill: lineSage,
                           }}
                         />
                         <Tooltip
                           formatter={(v, n) => [v, n]}
-                          contentStyle={dark ? { backgroundColor: '#262626', borderColor: '#404040', color: '#e5e5e5' } : undefined}
-                          labelStyle={dark ? { color: '#e5e5e5' } : undefined}
+                          contentStyle={dark ? { backgroundColor: '#24211c', borderColor: '#3a362f', color: '#f5f0e8' } : { backgroundColor: '#faf7f2', borderColor: '#e0d9cf' }}
+                          labelStyle={dark ? { color: '#f5f0e8' } : undefined}
                         />
                         <Line
                           yAxisId="left"
                           type="monotone"
                           dataKey="Temperature"
-                          stroke="#8884d8"
+                          stroke={lineAmber}
                           dot={false}
                           strokeWidth={2}
                         />
@@ -446,7 +453,7 @@ export default function App() {
                           yAxisId="right"
                           type="monotone"
                           dataKey="20°C-equiv mins"
-                          stroke="#82ca9d"
+                          stroke={lineSage}
                           dot={false}
                           strokeWidth={2}
                         />
@@ -460,11 +467,11 @@ export default function App() {
         </Card>
         </div>
 
-        <footer className="text-xs text-neutral-400 dark:text-neutral-500 flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-neutral-200 dark:border-neutral-800">
+        <footer className="text-xs text-warmgray-400 dark:text-warmgray-500 flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-warmgray-200 dark:border-warmgray-800">
           <span>
-            <a href="https://wawr.eu" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors">Pawel Wawreszuk</a>
+            <a href="https://wawr.eu" target="_blank" rel="noopener noreferrer" className="hover:text-warmgray-600 dark:hover:text-warmgray-300 transition-colors">Pawel Wawreszuk</a>
             {" · "}
-            <a href="mailto:p@wawr.eu" className="hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors">p@wawr.eu</a>
+            <a href="mailto:p@wawr.eu" className="hover:text-warmgray-600 dark:hover:text-warmgray-300 transition-colors">p@wawr.eu</a>
           </span>
           <span>Last modified {lastModified}</span>
         </footer>
@@ -472,13 +479,13 @@ export default function App() {
 
       {valid && result && (
         <div style={{ position: 'fixed', left: '-9999px', top: 0 }}>
-          <div ref={exportRef} className="bg-neutral-50 dark:bg-neutral-900 text-neutral-900 dark:text-neutral-50 p-6" style={{ width: 900 }}>
+          <div ref={exportRef} className="bg-warmgray-100 dark:bg-warmgray-900 text-warmgray-900 dark:text-warmgray-100 p-6" style={{ width: 900 }}>
             <div className="text-lg font-semibold mb-4">Rodinal Stand Development Calculator</div>
             <Card className="rounded-2xl shadow-sm">
               <CardContent className="p-6 grid gap-4">
                 <div className="grid grid-cols-3 gap-4">
                   <div className="grid gap-1">
-                    <div className="text-xs text-neutral-500 dark:text-neutral-400">
+                    <div className="text-xs text-warmgray-500 dark:text-warmgray-400">
                       Time at {fromC(20, unit).toFixed(0)}{unitLabel(unit)} (minutes)
                     </div>
                     <div className="text-sm font-medium">
@@ -486,7 +493,7 @@ export default function App() {
                     </div>
                   </div>
                   <div className="grid gap-1">
-                    <div className="text-xs text-neutral-500 dark:text-neutral-400">
+                    <div className="text-xs text-warmgray-500 dark:text-warmgray-400">
                       Actual temperature ({unitLabel(unit)})
                     </div>
                     <div className="text-sm font-medium">
@@ -494,7 +501,7 @@ export default function App() {
                     </div>
                   </div>
                   <div className="grid gap-1">
-                    <div className="text-xs text-neutral-500 dark:text-neutral-400">
+                    <div className="text-xs text-warmgray-500 dark:text-warmgray-400">
                       Fridge cooling
                     </div>
                     <div className="text-sm font-medium">
@@ -505,12 +512,12 @@ export default function App() {
 
                 <div className="grid grid-cols-2 gap-6">
                   <div className="grid gap-3">
-                    <div className="rounded-2xl p-4 border dark:border-neutral-700 bg-white dark:bg-neutral-800 flex items-center justify-between">
+                    <div className="rounded-2xl p-4 border border-warmgray-200 dark:border-warmgray-700 bg-warmgray-50 dark:bg-warmgray-800 flex items-center justify-between">
                       <div className="grid gap-1">
-                        <div className="text-sm text-neutral-500 dark:text-neutral-400">
+                        <div className="text-sm text-warmgray-500 dark:text-warmgray-400">
                           Calculated development time
                         </div>
-                        <div className="text-3xl font-mono font-medium tracking-tight">
+                        <div className="text-3xl font-mono font-medium tracking-tight time-glow">
                           {formatMinutesToMMSS(result.devMinutes)}
                         </div>
                       </div>
@@ -521,8 +528,8 @@ export default function App() {
                       )}
                     </div>
                     <div className="grid grid-cols-3 gap-3">
-                      <div className="rounded-2xl p-3 border dark:border-neutral-700 bg-white dark:bg-neutral-800">
-                        <div className="text-xs text-neutral-500 dark:text-neutral-400 flex items-center gap-1">
+                      <div className="rounded-2xl p-3 border border-warmgray-200 dark:border-warmgray-700 bg-warmgray-50 dark:bg-warmgray-800">
+                        <div className="text-xs text-warmgray-500 dark:text-warmgray-400 flex items-center gap-1">
                           <Thermometer className="w-3 h-3" />
                           Avg. temp
                         </div>
@@ -531,8 +538,8 @@ export default function App() {
                           {unitLabel(unit)}
                         </div>
                       </div>
-                      <div className="rounded-2xl p-3 border dark:border-neutral-700 bg-white dark:bg-neutral-800">
-                        <div className="text-xs text-neutral-500 dark:text-neutral-400 flex items-center gap-1">
+                      <div className="rounded-2xl p-3 border border-warmgray-200 dark:border-warmgray-700 bg-warmgray-50 dark:bg-warmgray-800">
+                        <div className="text-xs text-warmgray-500 dark:text-warmgray-400 flex items-center gap-1">
                           <Thermometer className="w-3 h-3" />
                           Final temp
                         </div>
@@ -541,8 +548,8 @@ export default function App() {
                           {unitLabel(unit)}
                         </div>
                       </div>
-                      <div className="rounded-2xl p-3 border dark:border-neutral-700 bg-white dark:bg-neutral-800">
-                        <div className="text-xs text-neutral-500 dark:text-neutral-400 flex items-center gap-1">
+                      <div className="rounded-2xl p-3 border border-warmgray-200 dark:border-warmgray-700 bg-warmgray-50 dark:bg-warmgray-800">
+                        <div className="text-xs text-warmgray-500 dark:text-warmgray-400 flex items-center gap-1">
                           <FlaskConical className="w-3 h-3" />
                           Baseline
                         </div>
@@ -552,29 +559,29 @@ export default function App() {
                       </div>
                     </div>
                   </div>
-                  <div className="rounded-2xl border dark:border-neutral-700 bg-white dark:bg-neutral-800 p-3">
-                    <div className="text-sm text-neutral-600 dark:text-neutral-400 mb-2">
+                  <div className="rounded-2xl border border-warmgray-200 dark:border-warmgray-700 bg-warmgray-50 dark:bg-warmgray-800 p-3">
+                    <div className="text-sm text-warmgray-600 dark:text-warmgray-400 mb-2">
                       Cooling & activity over time
                     </div>
                     <LineChart width={390} height={224} data={chartData} margin={{ top: 4, right: 64, bottom: 20, left: 8 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke={dark ? '#404040' : '#e5e5e5'} />
+                      <CartesianGrid stroke={gridColor} />
                       <XAxis
                         dataKey="time"
-                        tick={{ fontSize: 11, fill: dark ? '#a3a3a3' : '#737373' }}
+                        tick={{ fontSize: 11, fill: tickColor }}
                         tickLine={false}
-                        axisLine={{ stroke: dark ? '#525252' : '#d4d4d4' }}
+                        axisLine={{ stroke: axisColor }}
                         tickFormatter={v => Math.round(Number(v))}
                         label={{
                           value: "time (min)",
                           position: "insideBottom",
                           offset: -12,
                           fontSize: 11,
-                          fill: dark ? '#737373' : '#a3a3a3',
+                          fill: tickColor,
                         }}
                       />
                       <YAxis
                         yAxisId="left"
-                        tick={{ fontSize: 11, fill: '#8884d8' }}
+                        tick={{ fontSize: 11, fill: lineAmber }}
                         tickLine={false}
                         axisLine={false}
                         domain={[0, "auto"]}
@@ -584,13 +591,13 @@ export default function App() {
                           position: "insideLeft",
                           dx: 10,
                           fontSize: 11,
-                          fill: '#8884d8',
+                          fill: lineAmber,
                         }}
                       />
                       <YAxis
                         yAxisId="right"
                         orientation="right"
-                        tick={{ fontSize: 11, fill: '#82ca9d' }}
+                        tick={{ fontSize: 11, fill: lineSage }}
                         tickLine={false}
                         axisLine={false}
                         domain={[0, "auto"]}
@@ -600,14 +607,14 @@ export default function App() {
                           position: "insideRight",
                           dx: -10,
                           fontSize: 11,
-                          fill: '#82ca9d',
+                          fill: lineSage,
                         }}
                       />
                       <Line
                         yAxisId="left"
                         type="monotone"
                         dataKey="Temperature"
-                        stroke="#8884d8"
+                        stroke={lineAmber}
                         dot={false}
                         strokeWidth={2}
                       />
@@ -615,7 +622,7 @@ export default function App() {
                         yAxisId="right"
                         type="monotone"
                         dataKey="20°C-equiv mins"
-                        stroke="#82ca9d"
+                        stroke={lineSage}
                         dot={false}
                         strokeWidth={2}
                       />
@@ -624,7 +631,7 @@ export default function App() {
                 </div>
               </CardContent>
             </Card>
-            <div ref={timestampRef} className="text-xs text-neutral-400 dark:text-neutral-500 mt-3" />
+            <div ref={timestampRef} className="text-xs text-warmgray-400 dark:text-warmgray-500 mt-3" />
           </div>
         </div>
       )}

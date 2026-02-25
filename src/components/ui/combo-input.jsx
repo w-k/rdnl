@@ -72,14 +72,14 @@ export function ComboInput({ value, onChange, validate, options = [], className 
           {!focused && matchedOption && (
             <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 flex items-baseline gap-1.5">
               <span className="invisible">{committed.current}</span>
-              <span className="text-neutral-400 text-xs">{matchedOption.label}</span>
+              <span className="text-warmgray-400 text-xs">{matchedOption.label}</span>
             </span>
           )}
         </div>
         <button
           type="button"
           tabIndex={-1}
-          className="px-2 h-full flex items-center text-neutral-400 hover:text-neutral-600 transition-colors"
+          className="px-2 h-full flex items-center text-warmgray-400 hover:text-warmgray-600 transition-colors"
           onMouseDown={(e) => {
             e.preventDefault()
             setOpen(prev => !prev)
@@ -89,13 +89,13 @@ export function ComboInput({ value, onChange, validate, options = [], className 
         </button>
       </div>
       {open && (
-        <div className="absolute z-50 mt-1 w-full rounded-md border dark:border-neutral-700 bg-white dark:bg-neutral-800 shadow-md py-1">
+        <div className="absolute z-50 mt-1 w-full rounded-md border border-warmgray-200 dark:border-warmgray-700 bg-warmgray-50 dark:bg-warmgray-800 shadow-md py-1">
           {options.map((option) => (
             <button
               key={option.value}
               type="button"
-              className={`w-full text-left px-3 py-2 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors flex items-baseline gap-1.5 ${
-                option.value === committed.current ? 'font-medium' : 'text-neutral-700 dark:text-neutral-300'
+              className={`w-full text-left px-3 py-2 text-sm hover:bg-warmgray-200 dark:hover:bg-warmgray-700 transition-colors flex items-baseline gap-1.5 ${
+                option.value === committed.current ? 'font-medium' : 'text-warmgray-700 dark:text-warmgray-300'
               }`}
               onMouseDown={(e) => {
                 e.preventDefault()
@@ -103,7 +103,7 @@ export function ComboInput({ value, onChange, validate, options = [], className 
               }}
             >
               <span>{option.value}</span>
-              <span className="text-neutral-400 text-xs">{option.label}</span>
+              <span className="text-warmgray-400 text-xs">{option.label}</span>
             </button>
           ))}
         </div>
