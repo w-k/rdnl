@@ -1,12 +1,12 @@
 import React, { useMemo, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { NumericInput } from "@/components/ui/numeric-input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
-import { Info, Thermometer, Timer, FlaskConical, Settings, RotateCcw } from "lucide-react";
+import { Thermometer, Timer, FlaskConical, Settings, RotateCcw } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 
 const DEFAULT_BASE_TIMES = { "1+100": 60, "1+50": 30 };
@@ -67,20 +67,12 @@ function formatMinutesToMMSS(minutes) {
 
 export default function App() {
   const [dilution, setDilution] = useState("1+50");
-  const [temp, setTemp] = useState("20");
+  const [temp, setTemp] = useState(20);
   const [useFridge, setUseFridge] = useState(false);
   const [baseTimes, setBaseTimes] = useState(DEFAULT_BASE_TIMES);
   const [showSettings, setShowSettings] = useState(false);
 
-  const parsedTemp = Number(temp);
-  const valid = isFinite(parsedTemp) && parsedTemp > -10 && parsedTemp < 60;
-
-  const handleBaseTimeChange = (dilutionKey, value) => {
-    const numValue = Number(value);
-    if (isFinite(numValue) && numValue > 0) {
-      setBaseTimes(prev => ({ ...prev, [dilutionKey]: numValue }));
-    }
-  };
+  const valid = isFinite(temp) && temp > -10 && temp < 60;
 
   const resetToDefaults = () => {
     setBaseTimes(DEFAULT_BASE_TIMES);
@@ -88,13 +80,13 @@ export default function App() {
 
   const result = useMemo(() => {
     if (!valid) return null;
-    return simulateDevTime(dilution, parsedTemp, useFridge, baseTimes);
-  }, [dilution, parsedTemp, useFridge, baseTimes, valid]);
+    return simulateDevTime(dilution, temp, useFridge, baseTimes);
+  }, [dilution, temp, useFridge, baseTimes, valid]);
 
   const status = useMemo(() => {
     if (!result || !valid) return null;
-    return classifyRisk(parsedTemp, useFridge, result.devMinutes);
-  }, [result, parsedTemp, useFridge, valid]);
+    return classifyRisk(temp, useFridge, result.devMinutes);
+  }, [result, temp, useFridge, valid]);
 
   const chartData = useMemo(() => {
     if (!result) return [];
@@ -137,27 +129,25 @@ export default function App() {
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className="grid gap-2">
                     <Label htmlFor="base-1+100">1+100 baseline (minutes)</Label>
-                    <Input
+                    <NumericInput
                       id="base-1+100"
-                      type="number"
-                      min="1"
-                      step="1"
+                      inputMode="numeric"
                       className="rounded-xl"
                       value={baseTimes["1+100"]}
-                      onChange={(e) => handleBaseTimeChange("1+100", e.target.value)}
+                      onChange={(n) => setBaseTimes(prev => ({ ...prev, "1+100": n }))}
+                      validate={(n) => n > 0}
                     />
                     <span className="text-xs text-neutral-500">Default: {DEFAULT_BASE_TIMES["1+100"]} min</span>
                   </div>
                   <div className="grid gap-2">
                     <Label htmlFor="base-1+50">1+50 baseline (minutes)</Label>
-                    <Input
+                    <NumericInput
                       id="base-1+50"
-                      type="number"
-                      min="1"
-                      step="1"
+                      inputMode="numeric"
                       className="rounded-xl"
                       value={baseTimes["1+50"]}
-                      onChange={(e) => handleBaseTimeChange("1+50", e.target.value)}
+                      onChange={(n) => setBaseTimes(prev => ({ ...prev, "1+50": n }))}
+                      validate={(n) => n > 0}
                     />
                     <span className="text-xs text-neutral-500">Default: {DEFAULT_BASE_TIMES["1+50"]} min</span>
                   </div>
@@ -192,11 +182,12 @@ export default function App() {
               </div>
               <div className="grid gap-2">
                 <Label>Initial temperature (°C)</Label>
-                <Input
+                <NumericInput
                   className="rounded-xl"
                   inputMode="decimal"
                   value={temp}
-                  onChange={(e) => setTemp(e.target.value)}
+                  onChange={setTemp}
+                  validate={(n) => n > -10 && n < 60}
                   placeholder="e.g., 20"
                 />
               </div>
@@ -208,10 +199,6 @@ export default function App() {
                 <Switch checked={useFridge} onCheckedChange={setUseFridge} />
               </div>
             </div>
-
-            {!valid && (
-              <div className="text-sm text-red-600 flex items-center gap-2"><Info className="w-4 h-4"/> Enter a valid temperature between -10 and 60°C.</div>
-            )}
 
             {valid && result && (
               <div className="grid lg:grid-cols-2 gap-6">
