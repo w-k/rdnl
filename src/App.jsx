@@ -5,7 +5,7 @@ import { ComboInput } from "@/components/ui/combo-input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
-import { Thermometer, Timer, FlaskConical } from "lucide-react";
+import { Thermometer, Timer, FlaskConical, HelpCircle } from "lucide-react";
 import {
   LineChart,
   Line,
@@ -22,8 +22,7 @@ const toC = (v, unit) =>
   unit === "F" ? ((v - 32) * 5) / 9 : unit === "K" ? v - 273.15 : v;
 const fromC = (c, unit) =>
   unit === "F" ? (c * 9) / 5 + 32 : unit === "K" ? c + 273.15 : c;
-const unitLabel = (unit) =>
-  unit === "F" ? "°F" : unit === "K" ? "K" : "°C";
+const unitLabel = (unit) => (unit === "F" ? "°F" : unit === "K" ? "K" : "°C");
 
 function rateAtTemp(T) {
   return Math.pow(1.4, (T - 20) / 5);
@@ -117,6 +116,7 @@ export default function App() {
   const [temp, setTemp] = useState(20);
   const [unit, setUnit] = useState("C");
   const [useFridge, setUseFridge] = useState(false);
+  const [showHow, setShowHow] = useState(false);
 
   const tempC = toC(temp, unit);
   const valid =
@@ -160,8 +160,11 @@ export default function App() {
             <h1 className="text-2xl font-semibold">
               Rodinal Stand Development Calculator
             </h1>
-            <p className="text-sm text-neutral-600 mt-1">
-              Fridge-aware timing with a pragmatic temperature model.
+            <p className="text-sm text-neutral-600 mt-1 max-w-xl">
+              <a href="https://www.digitaltruth.com/devchart.php?doc=stand" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-neutral-900">Stand development</a> uses
+              highly diluted developer and long times to produce compensating effects in the negative.
+              Temperature matters — warm conditions accelerate development and risk blown highlights.
+              This calculator models adjusted times for your actual temperature, with optional fridge cooling.
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -180,17 +183,55 @@ export default function App() {
                 </button>
               ))}
             </div>
-            <Badge className="text-xs" variant="secondary">
-              Beta
-            </Badge>
           </div>
         </header>
+
+        <button
+          onClick={() => setShowHow(!showHow)}
+          className="flex items-center gap-1.5 text-xs text-neutral-500 hover:text-neutral-700 transition-colors w-fit"
+        >
+          <HelpCircle className="w-3.5 h-3.5" />
+          How does it work?
+        </button>
+
+        {showHow && (
+          <Card className="rounded-2xl shadow-sm">
+            <CardContent className="p-4 sm:p-6 text-sm text-neutral-600 grid gap-3">
+              <p className="font-medium text-neutral-800">How the calculation works</p>
+              <p>
+                Development times are usually given for 20°C. At different temperatures, chemistry
+                runs faster or slower. This calculator uses an exponential rate model: for every
+                5°C above 20°C, the development rate increases by a factor of 1.4 (and decreases
+                symmetrically below 20°C).
+              </p>
+              <p>
+                The simulation steps through time in 15-second increments, accumulating
+                "equivalent minutes at 20°C." When the accumulated equivalent reaches your
+                baseline time, development is complete. At a constant temperature this simply
+                scales the time, but with fridge cooling the temperature drops over the session,
+                so the rate slows progressively.
+              </p>
+              <p>
+                The fridge model uses Newton's law of cooling: the tank temperature decays
+                exponentially toward fridge temperature (default 4°C) with a time constant
+                τ of 30 minutes. This means the tank loses about 63% of the temperature
+                difference in the first 30 minutes.
+              </p>
+              <p className="text-xs text-neutral-400">
+                This is a pragmatic model, not a precise chemical simulation. Always verify with test strips and your own workflow.
+              </p>
+            </CardContent>
+          </Card>
+        )}
 
         <Card className="rounded-2xl shadow-sm">
           <CardContent className="p-4 sm:p-6 grid gap-4">
             <div className="grid sm:grid-cols-3 gap-4 items-end">
               <div className="grid gap-2">
-                <Label>Time at {fromC(20, unit).toFixed(0)}{unitLabel(unit)} (minutes)</Label>
+                <Label>
+                  Time at {fromC(20, unit).toFixed(0)}
+                  {unitLabel(unit)} (minutes)
+                </Label>
                 <ComboInput
                   className="rounded-xl"
                   inputMode="numeric"
@@ -218,7 +259,8 @@ export default function App() {
                 <div className="grid">
                   <Label className="mb-1">Put tank in fridge</Label>
                   <div className="text-xs text-neutral-500">
-                    Assumes {fromC(4, unit).toFixed(0)}{unitLabel(unit)} fridge, τ = 30 min
+                    Assumes {fromC(4, unit).toFixed(0)}
+                    {unitLabel(unit)} fridge, τ = 30 min
                   </div>
                 </div>
                 <Switch checked={useFridge} onCheckedChange={setUseFridge} />
@@ -228,11 +270,6 @@ export default function App() {
             {valid && result && (
               <div className="grid lg:grid-cols-2 gap-6">
                 <div className="grid gap-3">
-                  <div className="flex items-center gap-2 text-sm text-neutral-600">
-                    <Timer className="w-4 h-4" />
-                    Baseline at {fromC(20, unit).toFixed(0)}{unitLabel(unit)}: {baselineTime} min • Modeled dev time
-                    below
-                  </div>
                   <div className="rounded-2xl p-4 border bg-white flex items-center justify-between">
                     <div className="grid gap-1">
                       <div className="text-sm text-neutral-500">
@@ -257,7 +294,8 @@ export default function App() {
                         Avg. temp
                       </div>
                       <div className="text-lg font-medium">
-                        {fromC(result.avgTemp, unit).toFixed(1)}{unitLabel(unit)}
+                        {fromC(result.avgTemp, unit).toFixed(1)}
+                        {unitLabel(unit)}
                       </div>
                     </div>
                     <div className="rounded-2xl p-3 border bg-white">
@@ -266,7 +304,8 @@ export default function App() {
                         Final temp
                       </div>
                       <div className="text-lg font-medium">
-                        {fromC(result.finalTemp, unit).toFixed(1)}{unitLabel(unit)}
+                        {fromC(result.finalTemp, unit).toFixed(1)}
+                        {unitLabel(unit)}
                       </div>
                     </div>
                     <div className="rounded-2xl p-3 border bg-white">
@@ -278,10 +317,6 @@ export default function App() {
                         {baselineTime} min
                       </div>
                     </div>
-                  </div>
-                  <div className="text-xs text-neutral-500 leading-snug">
-                    Notes: This is a pragmatic model, not gospel. Always test
-                    with your film, water, and workflow.
                   </div>
                 </div>
                 <div className="rounded-2xl border bg-white p-3">
