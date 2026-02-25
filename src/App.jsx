@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react";
+import { lastModified } from "./lastModified";
 import { Card, CardContent } from "@/components/ui/card";
 import { NumericInput } from "@/components/ui/numeric-input";
 import { ComboInput } from "@/components/ui/combo-input";
@@ -409,6 +410,15 @@ export default function App() {
             )}
           </CardContent>
         </Card>
+
+        <footer className="text-xs text-neutral-400 dark:text-neutral-500 flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-neutral-200 dark:border-neutral-800">
+          <span>
+            <a href="https://wawr.eu" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors">Pawel Wawreszuk</a>
+            {" · "}
+            <a href="mailto:p@wawr.eu" className="hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors">p@wawr.eu</a>
+          </span>
+          <span>Last modified {lastModified}</span>
+        </footer>
       </div>
     </div>
   );
