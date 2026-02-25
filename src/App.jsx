@@ -13,6 +13,7 @@ import {
   Line,
   XAxis,
   YAxis,
+  CartesianGrid,
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
@@ -196,10 +197,11 @@ export default function App() {
       <div className="max-w-4xl mx-auto grid gap-6">
         <header className="flex items-start justify-between">
           <div>
-            <h1 className="text-2xl font-semibold">
-              Rodinal Stand Development Calculator
+            <h1 className="text-8xl font-forgetica tracking-wide leading-none">
+              RDNL
             </h1>
-            <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-1 max-w-xl">
+            <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-2 max-w-xl">
+              Rodinal stand development calculator.{" "}
               <a href="https://www.digitaltruth.com/devchart.php?doc=stand" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-neutral-900 dark:hover:text-neutral-100">Stand development</a> uses
               highly diluted developer and long times to produce compensating effects in the negative.
               Temperature matters — warm conditions accelerate development and risk blown highlights.
@@ -208,14 +210,6 @@ export default function App() {
           </div>
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
-            <button
-              onClick={handleExport}
-              disabled={!valid || !result}
-              className="p-1.5 rounded-lg text-neutral-500 hover:text-neutral-700 hover:bg-neutral-100 dark:hover:text-neutral-300 dark:hover:bg-neutral-800 transition-colors disabled:opacity-30 disabled:pointer-events-none"
-              aria-label="Export as image"
-            >
-              <Share2 className="w-4 h-4" />
-            </button>
             <button
               onClick={() => setDark(d => !d)}
               className="p-1.5 rounded-lg text-neutral-500 hover:text-neutral-700 hover:bg-neutral-100 dark:hover:text-neutral-300 dark:hover:bg-neutral-800 transition-colors"
@@ -280,6 +274,16 @@ export default function App() {
           </Card>
         )}
 
+        <div className="relative">
+        <button
+          onClick={handleExport}
+          disabled={!valid || !result}
+          className="absolute -top-3 right-4 z-10 flex items-center gap-1.5 px-3 py-1 rounded-full text-xs text-neutral-500 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 hover:text-neutral-700 dark:hover:text-neutral-300 transition-colors disabled:opacity-30 disabled:pointer-events-none shadow-sm"
+          aria-label="Export as image"
+        >
+          <Share2 className="w-3 h-3" />
+          Export
+        </button>
         <Card className="rounded-2xl shadow-sm">
           <CardContent className="p-4 sm:p-6 grid gap-4">
             <div className="grid sm:grid-cols-3 gap-4 items-end">
@@ -328,7 +332,7 @@ export default function App() {
                       <div className="text-sm text-neutral-500 dark:text-neutral-400">
                         Calculated development time
                       </div>
-                      <div className="text-3xl font-semibold tracking-tight">
+                      <div className="text-3xl font-mono font-medium tracking-tight">
                         {formatMinutesToMMSS(result.devMinutes)}
                       </div>
                     </div>
@@ -346,7 +350,7 @@ export default function App() {
                         <Thermometer className="w-3 h-3" />
                         Avg. temp
                       </div>
-                      <div className="text-lg font-medium">
+                      <div className="text-lg font-mono font-medium">
                         {fromC(result.avgTemp, unit).toFixed(1)}
                         {unitLabel(unit)}
                       </div>
@@ -356,7 +360,7 @@ export default function App() {
                         <Thermometer className="w-3 h-3" />
                         Final temp
                       </div>
-                      <div className="text-lg font-medium">
+                      <div className="text-lg font-mono font-medium">
                         {fromC(result.finalTemp, unit).toFixed(1)}
                         {unitLabel(unit)}
                       </div>
@@ -366,7 +370,7 @@ export default function App() {
                         <FlaskConical className="w-3 h-3" />
                         Baseline
                       </div>
-                      <div className="text-lg font-medium">
+                      <div className="text-lg font-mono font-medium">
                         {baselineTime} min
                       </div>
                     </div>
@@ -378,41 +382,51 @@ export default function App() {
                   </div>
                   <div className="h-56">
                     <ResponsiveContainer width="100%" height="100%">
-                      <LineChart data={chartData}>
+                      <LineChart data={chartData} margin={{ top: 4, right: 64, bottom: 20, left: 8 }}>
+                        <CartesianGrid strokeDasharray="3 3" stroke={dark ? '#404040' : '#e5e5e5'} />
                         <XAxis
                           dataKey="time"
-                          tick={{ fontSize: 12, fill: dark ? '#a3a3a3' : '#737373' }}
+                          tick={{ fontSize: 11, fill: dark ? '#a3a3a3' : '#737373' }}
+                          tickLine={false}
+                          axisLine={{ stroke: dark ? '#525252' : '#d4d4d4' }}
+                          tickFormatter={v => Math.round(Number(v))}
                           label={{
-                            value: "Minutes",
-                            position: "insideBottomRight",
-                            offset: -4,
-                            fontSize: 12,
-                            fill: dark ? '#a3a3a3' : '#737373',
+                            value: "time (min)",
+                            position: "insideBottom",
+                            offset: -12,
+                            fontSize: 11,
+                            fill: dark ? '#737373' : '#a3a3a3',
                           }}
                         />
                         <YAxis
                           yAxisId="left"
-                          tick={{ fontSize: 12, fill: dark ? '#a3a3a3' : '#737373' }}
+                          tick={{ fontSize: 11, fill: '#8884d8' }}
+                          tickLine={false}
+                          axisLine={false}
                           domain={[0, "auto"]}
                           label={{
-                            value: unitLabel(unit),
+                            value: `temp (${unitLabel(unit)})`,
                             angle: -90,
                             position: "insideLeft",
-                            fontSize: 12,
-                            fill: dark ? '#a3a3a3' : '#737373',
+                            dx: 10,
+                            fontSize: 11,
+                            fill: '#8884d8',
                           }}
                         />
                         <YAxis
                           yAxisId="right"
                           orientation="right"
-                          tick={{ fontSize: 12, fill: dark ? '#a3a3a3' : '#737373' }}
+                          tick={{ fontSize: 11, fill: '#82ca9d' }}
+                          tickLine={false}
+                          axisLine={false}
                           domain={[0, "auto"]}
                           label={{
-                            value: "Eq. mins",
+                            value: "20°C equiv.",
                             angle: -90,
                             position: "insideRight",
-                            fontSize: 12,
-                            fill: dark ? '#a3a3a3' : '#737373',
+                            dx: -10,
+                            fontSize: 11,
+                            fill: '#82ca9d',
                           }}
                         />
                         <Tooltip
@@ -424,6 +438,7 @@ export default function App() {
                           yAxisId="left"
                           type="monotone"
                           dataKey="Temperature"
+                          stroke="#8884d8"
                           dot={false}
                           strokeWidth={2}
                         />
@@ -431,6 +446,7 @@ export default function App() {
                           yAxisId="right"
                           type="monotone"
                           dataKey="20°C-equiv mins"
+                          stroke="#82ca9d"
                           dot={false}
                           strokeWidth={2}
                         />
@@ -442,6 +458,7 @@ export default function App() {
             )}
           </CardContent>
         </Card>
+        </div>
 
         <footer className="text-xs text-neutral-400 dark:text-neutral-500 flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-neutral-200 dark:border-neutral-800">
           <span>
@@ -493,7 +510,7 @@ export default function App() {
                         <div className="text-sm text-neutral-500 dark:text-neutral-400">
                           Calculated development time
                         </div>
-                        <div className="text-3xl font-semibold tracking-tight">
+                        <div className="text-3xl font-mono font-medium tracking-tight">
                           {formatMinutesToMMSS(result.devMinutes)}
                         </div>
                       </div>
@@ -509,7 +526,7 @@ export default function App() {
                           <Thermometer className="w-3 h-3" />
                           Avg. temp
                         </div>
-                        <div className="text-lg font-medium">
+                        <div className="text-lg font-mono font-medium">
                           {fromC(result.avgTemp, unit).toFixed(1)}
                           {unitLabel(unit)}
                         </div>
@@ -519,7 +536,7 @@ export default function App() {
                           <Thermometer className="w-3 h-3" />
                           Final temp
                         </div>
-                        <div className="text-lg font-medium">
+                        <div className="text-lg font-mono font-medium">
                           {fromC(result.finalTemp, unit).toFixed(1)}
                           {unitLabel(unit)}
                         </div>
@@ -529,7 +546,7 @@ export default function App() {
                           <FlaskConical className="w-3 h-3" />
                           Baseline
                         </div>
-                        <div className="text-lg font-medium">
+                        <div className="text-lg font-mono font-medium">
                           {baselineTime} min
                         </div>
                       </div>
@@ -539,47 +556,58 @@ export default function App() {
                     <div className="text-sm text-neutral-600 dark:text-neutral-400 mb-2">
                       Cooling & activity over time
                     </div>
-                    <LineChart width={390} height={224} data={chartData}>
+                    <LineChart width={390} height={224} data={chartData} margin={{ top: 4, right: 64, bottom: 20, left: 8 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke={dark ? '#404040' : '#e5e5e5'} />
                       <XAxis
                         dataKey="time"
-                        tick={{ fontSize: 12, fill: dark ? '#a3a3a3' : '#737373' }}
+                        tick={{ fontSize: 11, fill: dark ? '#a3a3a3' : '#737373' }}
+                        tickLine={false}
+                        axisLine={{ stroke: dark ? '#525252' : '#d4d4d4' }}
+                        tickFormatter={v => Math.round(Number(v))}
                         label={{
-                          value: "Minutes",
-                          position: "insideBottomRight",
-                          offset: -4,
-                          fontSize: 12,
-                          fill: dark ? '#a3a3a3' : '#737373',
+                          value: "time (min)",
+                          position: "insideBottom",
+                          offset: -12,
+                          fontSize: 11,
+                          fill: dark ? '#737373' : '#a3a3a3',
                         }}
                       />
                       <YAxis
                         yAxisId="left"
-                        tick={{ fontSize: 12, fill: dark ? '#a3a3a3' : '#737373' }}
+                        tick={{ fontSize: 11, fill: '#8884d8' }}
+                        tickLine={false}
+                        axisLine={false}
                         domain={[0, "auto"]}
                         label={{
-                          value: unitLabel(unit),
+                          value: `temp (${unitLabel(unit)})`,
                           angle: -90,
                           position: "insideLeft",
-                          fontSize: 12,
-                          fill: dark ? '#a3a3a3' : '#737373',
+                          dx: 10,
+                          fontSize: 11,
+                          fill: '#8884d8',
                         }}
                       />
                       <YAxis
                         yAxisId="right"
                         orientation="right"
-                        tick={{ fontSize: 12, fill: dark ? '#a3a3a3' : '#737373' }}
+                        tick={{ fontSize: 11, fill: '#82ca9d' }}
+                        tickLine={false}
+                        axisLine={false}
                         domain={[0, "auto"]}
                         label={{
-                          value: "Eq. mins",
+                          value: "20°C equiv.",
                           angle: -90,
                           position: "insideRight",
-                          fontSize: 12,
-                          fill: dark ? '#a3a3a3' : '#737373',
+                          dx: -10,
+                          fontSize: 11,
+                          fill: '#82ca9d',
                         }}
                       />
                       <Line
                         yAxisId="left"
                         type="monotone"
                         dataKey="Temperature"
+                        stroke="#8884d8"
                         dot={false}
                         strokeWidth={2}
                       />
@@ -587,6 +615,7 @@ export default function App() {
                         yAxisId="right"
                         type="monotone"
                         dataKey="20°C-equiv mins"
+                        stroke="#82ca9d"
                         dot={false}
                         strokeWidth={2}
                       />
