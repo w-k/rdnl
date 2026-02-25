@@ -89,13 +89,13 @@ export function ComboInput({ value, onChange, validate, options = [], className 
         </button>
       </div>
       {open && (
-        <div className="absolute z-50 mt-1 w-full rounded-md border bg-white shadow-md py-1">
+        <div className="absolute z-50 mt-1 w-full rounded-md border dark:border-neutral-700 bg-white dark:bg-neutral-800 shadow-md py-1">
           {options.map((option) => (
             <button
               key={option.value}
               type="button"
-              className={`w-full text-left px-3 py-2 text-sm hover:bg-neutral-100 transition-colors flex items-baseline gap-1.5 ${
-                option.value === committed.current ? 'font-medium' : 'text-neutral-700'
+              className={`w-full text-left px-3 py-2 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors flex items-baseline gap-1.5 ${
+                option.value === committed.current ? 'font-medium' : 'text-neutral-700 dark:text-neutral-300'
               }`}
               onMouseDown={(e) => {
                 e.preventDefault()
