@@ -647,7 +647,10 @@ export default function App() {
                 </div>
               </CardContent>
             </Card>
-            <div ref={timestampRef} className="text-xs text-warmgray-400 dark:text-warmgray-500 mt-3" />
+            <div className="flex items-center justify-between mt-3">
+              <div ref={timestampRef} className="text-xs text-warmgray-400 dark:text-warmgray-500" />
+              <div className="text-xs text-warmgray-400 dark:text-warmgray-500">rdnl.dev</div>
+            </div>
           </div>
         </div>
       )}
