@@ -27,18 +27,13 @@ A calculator for determining adjusted development times for Rodinal stand develo
 
 - Node.js 16+
 
-### Install & Run
+### Scripts
 
 ```bash
-npm install
-npm run dev
-```
-
-### Production Build
-
-```bash
-npm run build
-npm run preview
+npm install          # install dependencies
+npm run dev          # start Vite dev server with hot reload
+npm run build        # production build to dist/
+npm run preview      # serve the production build locally
 ```
 
 ## Tech Stack

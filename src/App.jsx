@@ -53,7 +53,11 @@ function simulateDevTime(baseline, T0, useFridge) {
     const r = rateAtTemp(Tt);
     equiv += r * dt;
     curve.push({ t, T: Tt, rate: r, equiv });
-    if (equiv >= baseline) break;
+    if (equiv >= baseline) {
+      const overshoot = equiv - baseline;
+      t += dt - overshoot / r;
+      break;
+    }
     t += dt;
   }
 
