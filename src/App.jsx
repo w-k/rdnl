@@ -275,8 +275,12 @@ export default function App() {
               <p>
                 The fridge model uses Newton's law of cooling: the tank temperature decays
                 exponentially toward fridge temperature (default 4°C) with a time constant
-                τ of 30 minutes. This means the tank loses about 63% of the temperature
-                difference in the first 30 minutes.
+                τ (tau) of 30 minutes. Tau controls how fast the tank cools — it is the
+                time it takes for the temperature gap between the tank and the fridge to
+                shrink to about 37% of its original value (or equivalently, for ~63% of
+                the gap to close). A smaller tau means faster cooling; a larger tau means
+                the tank holds its temperature longer. 30 minutes is a reasonable default
+                for a steel tank in a home fridge.
               </p>
               <p className="text-xs text-warmgray-400 dark:text-warmgray-500">
                 This is a pragmatic model, not a precise chemical simulation. Always verify with test strips and your own workflow.
