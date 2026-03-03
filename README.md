@@ -1,68 +1,50 @@
 # Rodinal Stand Development Calculator
 
-A React-based calculator for determining development times for Rodinal stand development with temperature modeling and fridge cooling simulation.
+A calculator for determining adjusted development times for Rodinal stand development, with temperature modeling and optional fridge cooling simulation.
 
 ## Features
 
-- Calculate development times for 1+50 and 1+100 Rodinal dilutions
-- Temperature-aware modeling with cooling simulation
-- Fridge cooling support with customizable parameters
-- Real-time charts showing temperature and development progress
-- Risk assessment for different temperature scenarios
+- Preset dilutions (1+50 / 1+100) or custom baseline times
+- Temperature-adjusted development times using an exponential rate model
+- Fridge cooling simulation using Newton's law of cooling
+- Real-time chart showing temperature decay and 20°C-equivalent development progress
+- Risk assessment for your temperature and dilution combination
+- Temperature units: °C, °F, K
+- Dark mode
+- Export results as a PNG image
+
+## Usage
+
+1. **Set baseline time** — pick a preset dilution (1+50 = 30 min, 1+100 = 60 min) or type any custom time in minutes
+2. **Enter your developer temperature** — switch units with the °C / °F / K toggle in the header
+3. **Optionally enable fridge cooling** — models the tank cooling toward 4°C with a 30-minute time constant
+4. **Read the result** — the calculated development time, average and final temperatures, and a risk badge are shown immediately
+5. **Export** — click the Export button to save the result card as a PNG
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js (version 16.0.0 or higher)
-- npm (comes with Node.js)
+- Node.js 16+
 
-### Installation
+### Install & Run
 
-1. Clone or download this repository
-2. Navigate to the project directory:
-   ```bash
-   cd rdnl
-   ```
-
-3. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-### Running the Application
-
-#### Development Mode
-Start the development server with hot reload:
 ```bash
+npm install
 npm run dev
 ```
-The app will be available at `http://localhost:5173`
 
-#### Production Build
-Build the app for production:
+### Production Build
+
 ```bash
 npm run build
-```
-The built files will be in the `dist/` folder.
-
-#### Preview Production Build
-Preview the production build locally:
-```bash
 npm run preview
 ```
 
-## Usage
+## Tech Stack
 
-1. Select your Rodinal dilution (1+50 or 1+100)
-2. Enter the initial temperature of your developer
-3. Toggle "Put tank in fridge" if you plan to cool the developer during development
-4. View the calculated development time and risk assessment
-5. Monitor the temperature and development progress chart
-
-## Technical Details
-
-- Built with React 19 and Vite
-- Styled with Tailwind CSS
-- Charts powered by Recharts
-- Icons from Lucide React
+- React 19 / Vite
+- Tailwind CSS
+- Recharts
+- Lucide React
+- html-to-image
