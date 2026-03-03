@@ -151,14 +151,22 @@ export default function App() {
     const pad = (n) => String(n).padStart(2, '0');
     const ts = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
     if (timestampRef.current) timestampRef.current.textContent = `Exported ${ts}`;
+    const filename = `rodinal-stand-${formatMinutesToMMSS(result.devMinutes).replace(':', 'm')}s.png`;
     try {
       const dataUrl = await toPng(exportRef.current, { pixelRatio: 2 });
-      const link = document.createElement('a');
-      link.download = `rodinal-stand-${formatMinutesToMMSS(result.devMinutes).replace(':', 'm')}s.png`;
-      link.href = dataUrl;
-      link.click();
+      const res = await fetch(dataUrl);
+      const blob = await res.blob();
+      const file = new File([blob], filename, { type: 'image/png' });
+      if (navigator.canShare?.({ files: [file] })) {
+        await navigator.share({ files: [file] });
+      } else {
+        const link = document.createElement('a');
+        link.download = filename;
+        link.href = dataUrl;
+        link.click();
+      }
     } catch (err) {
-      console.error('Export failed:', err);
+      if (err.name !== 'AbortError') console.error('Export failed:', err);
     }
   };
 
