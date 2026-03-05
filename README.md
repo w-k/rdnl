@@ -36,6 +36,19 @@ npm run build        # production build to dist/
 npm run preview      # serve the production build locally
 ```
 
+## Analytics
+
+Privacy-friendly analytics via [Plausible](https://plausible.io). The following custom events are tracked:
+
+| Event | Trigger | Props |
+|---|---|---|
+| `Temperature Changed` | User changes the temperature input | `value`, `unit` |
+| `Time Changed` | User changes the baseline time input | `value` |
+| `Unit Changed` | User switches temperature unit (°C/°F/K) | `unit` |
+| `Export Clicked` | User presses the Export button | `temperature`, `unit`, `time` |
+
+Each event must have a matching [custom event goal](https://plausible.io/docs/custom-event-goals) created in the Plausible dashboard to appear in reports.
+
 ## Tech Stack
 
 - React 19 / Vite

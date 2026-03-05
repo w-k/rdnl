@@ -152,6 +152,7 @@ export default function App() {
     const ts = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
     if (timestampRef.current) timestampRef.current.textContent = `Exported ${ts}`;
     const filename = `rodinal-stand-${formatMinutesToMMSS(result.devMinutes).replace(':', 'm')}s.png`;
+    window.plausible('Export Clicked', { props: { temperature: temp, unit, time: baselineTime } });
     try {
       const dataUrl = await toPng(exportRef.current, { pixelRatio: 2 });
       const res = await fetch(dataUrl);
@@ -181,6 +182,7 @@ export default function App() {
   const switchUnit = (newUnit) => {
     setTemp(Number(fromC(tempC, newUnit).toFixed(1)));
     setUnit(newUnit);
+    window.plausible('Unit Changed', { props: { unit: newUnit } });
   };
 
   const result = useMemo(() => {
@@ -319,7 +321,7 @@ export default function App() {
                   className="rounded-xl"
                   inputMode="numeric"
                   value={baselineTime}
-                  onChange={setBaselineTime}
+                  onChange={(v) => { setBaselineTime(v); window.plausible('Time Changed', { props: { value: v } }); }}
                   validate={(n) => n > 0}
                   options={DILUTION_OPTIONS}
                 />
@@ -330,7 +332,7 @@ export default function App() {
                   className="rounded-xl"
                   inputMode="decimal"
                   value={temp}
-                  onChange={setTemp}
+                  onChange={(v) => { setTemp(v); window.plausible('Temperature Changed', { props: { value: v, unit } }); }}
                   validate={(n) => toC(n, unit) > -10 && toC(n, unit) < 60}
                   placeholder={`e.g., ${fromC(20, unit).toFixed(0)}`}
                 />

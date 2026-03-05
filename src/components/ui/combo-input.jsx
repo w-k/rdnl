@@ -67,6 +67,7 @@ export function ComboInput({ value, onChange, validate, options = [], className 
               setFocused(false)
               commit(e.target.value)
             }}
+            onKeyDown={(e) => { if (e.key === 'Enter') commit(e.target.value) }}
             {...props}
           />
           {!focused && matchedOption && (

@@ -35,6 +35,7 @@ export function NumericInput({ value, onChange, validate, className = '', onFocu
       onFocus={handleFocus}
       onChange={(e) => setDraft(e.target.value)}
       onBlur={(e) => commit(e.target.value)}
+      onKeyDown={(e) => { if (e.key === 'Enter') commit(e.target.value) }}
       {...props}
     />
   )
