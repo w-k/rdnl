@@ -55,7 +55,7 @@ export function ComboInput({ value, onChange, validate, options = [], className 
       <div className={`flex items-center h-10 w-full rounded-md border border-input bg-transparent text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 ${className}`}>
         <div className="relative flex-1 h-full min-w-0">
           <input
-            className="w-full h-full bg-transparent px-3 py-2 outline-none placeholder:text-muted-foreground"
+            className="w-full h-full bg-transparent px-3 py-2 outline-hidden placeholder:text-muted-foreground"
             value={focused ? draft : String(committed.current)}
             onFocus={(e) => {
               setFocused(true)

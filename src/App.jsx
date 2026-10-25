@@ -266,7 +266,7 @@ export default function App() {
         </button>
 
         {showHow && (
-          <Card className="rounded-2xl shadow-sm">
+          <Card className="rounded-2xl shadow-xs">
             <CardContent className="p-4 sm:p-6 text-sm text-warmgray-600 dark:text-warmgray-400 grid gap-3">
               <p className="font-medium text-warmgray-800 dark:text-warmgray-200">How the calculation works</p>
               <p>
@@ -303,13 +303,13 @@ export default function App() {
         <button
           onClick={handleExport}
           disabled={!valid || !result}
-          className="absolute -top-3 right-4 z-10 flex items-center gap-1.5 px-3 py-1 rounded-full text-xs text-warmgray-500 bg-warmgray-50 dark:bg-warmgray-800 border border-warmgray-200 dark:border-warmgray-700 hover:text-warmgray-700 dark:hover:text-warmgray-300 transition-colors disabled:opacity-30 disabled:pointer-events-none shadow-sm"
+          className="absolute -top-3 right-4 z-10 flex items-center gap-1.5 px-3 py-1 rounded-full text-xs text-warmgray-500 bg-warmgray-50 dark:bg-warmgray-800 border border-warmgray-200 dark:border-warmgray-700 hover:text-warmgray-700 dark:hover:text-warmgray-300 transition-colors disabled:opacity-30 disabled:pointer-events-none shadow-xs"
           aria-label="Export as image"
         >
           <Share2 className="w-3 h-3" />
           Export
         </button>
-        <Card className="rounded-2xl shadow-sm">
+        <Card className="rounded-2xl shadow-xs">
           <CardContent className="p-4 sm:p-6 grid gap-4">
             <div className="grid sm:grid-cols-3 gap-4 items-end">
               <div className="grid gap-2">
@@ -499,7 +499,7 @@ export default function App() {
         <div style={{ position: 'fixed', left: '-9999px', top: 0 }}>
           <div ref={exportRef} className="bg-warmgray-100 dark:bg-warmgray-900 text-warmgray-900 dark:text-warmgray-100 p-6" style={{ width: 900 }}>
             <div className="text-lg font-semibold mb-4">Rodinal Stand Development Calculator</div>
-            <Card className="rounded-2xl shadow-sm">
+            <Card className="rounded-2xl shadow-xs">
               <CardContent className="p-6 grid gap-4">
                 <div className="grid grid-cols-3 gap-4">
                   <div className="grid gap-1">
